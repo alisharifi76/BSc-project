@@ -8,11 +8,7 @@ from sklearn import preprocessing
 from sklearn.externals import joblib
 
 
-from flask import Flask
-from flask import json
-from flask import request
-
-data = pd.read_csv("data.csv")
+data = pd.read_csv("../dataset/data.csv")
 data = data.drop('name',1)
 
 #shuffle data
@@ -36,6 +32,7 @@ sum_per_s = 0
 for train, test in kf.split(data.drop(['malware'], axis=1),data['malware']):
     train_data = data.iloc[train]
     test_data = data.iloc[test]
+    print "train_data:\n", train_data, "test_data:\n", test_data
 
     x_train = train_data.drop(['malware'],1)
     y_train = train_data['malware']
@@ -85,14 +82,14 @@ print "recall:  " + str(sum_rec_s/10)
 print "precision:  " + str(sum_per_s/10)
 
 #x_val = x_val.iloc[0:0]
-app = Flask(__name__)
+# app = Flask(__name__)
 
-@app.route('/check', methods = ['POST'])
-def check():
-    content = request.json
-    print content
-    x_val = [content['cpu-usage'],content['context-switch'],content['cpu-migration'],content['page-faults'],content['cycles-GHz'],content['stalled-cycles-frontend-percent'],content['stalled-cycles-backend-percent'],content['Instructions-per-cycle'],content['stalled-cycles-per-instruction'],content['branches'],content['branch-misses-percent'],content['bus-cycle'],content['cache-misses-percent'],content['cache-references'],content['ref-cycles']]
-    y_predict_logistic_con = logistic.predict_proba(x_val)
-    return  json.dumps({"name" :content['name'],"possibility" : str("{0:.3f}".format(y_predict_logistic_con[0][1]))})
-if __name__ == "__main__":
-    app.run()
+# @app.route('/check', methods = ['POST'])
+# def check():
+#     content = request.json
+#     print content
+#     x_val = [content['cpu-usage'],content['context-switch'],content['cpu-migration'],content['page-faults'],content['cycles-GHz'],content['stalled-cycles-frontend-percent'],content['stalled-cycles-backend-percent'],content['Instructions-per-cycle'],content['stalled-cycles-per-instruction'],content['branches'],content['branch-misses-percent'],content['bus-cycle'],content['cache-misses-percent'],content['cache-references'],content['ref-cycles']]
+#     y_predict_logistic_con = logistic.predict_proba(x_val)
+#     return  json.dumps({"name" :content['name'],"possibility" : str("{0:.3f}".format(y_predict_logistic_con[0][1]))})
+# if __name__ == "__main__":
+#     app.run()
